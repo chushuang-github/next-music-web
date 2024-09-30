@@ -3,6 +3,8 @@ import wrapperStore from "@/store";
 import { fetchSearchSuggest } from "@/store/modules/home";
 import { getHomeInfoData } from "@/service/home";
 import TopSwiper from "@/components/top-swiper";
+import TabCategory from "@/components/tab-category";
+import Recommend from "@/components/recommend";
 import styles from "./index.module.scss";
 import type { FC, ReactElement } from "react";
 import type { GetServerSideProps } from "next";
@@ -17,10 +19,12 @@ export interface IProps {
 }
 
 const Home: FC<IProps> = memo((props) => {
-  const { banners } = props;
+  const { banners, categorys, recommends } = props;
   return (
     <div className={styles.home}>
       <TopSwiper banners={banners}></TopSwiper>
+      <TabCategory categorys={categorys}></TabCategory>
+      <Recommend recommends={recommends}></Recommend>
     </div>
   );
 });
@@ -41,7 +45,7 @@ export const getServerSideProps: GetServerSideProps =
       return {
         props: {
           banners: res.data.banners || [],
-          categorys: res.data.recommends || [],
+          categorys: res.data.categorys || [],
           recommends: res.data.recommends || [],
           digitalData: res.data.digitalData || {},
         },
