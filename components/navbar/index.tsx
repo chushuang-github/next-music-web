@@ -31,7 +31,7 @@ const Navbar: FC<IProps> = memo(() => {
               <span className={styles.count}>0</span>
             </Link>
           </div>
-          <div className={styles["right-login"]}>login</div>
+          <div className={styles["right-login"]}>登录</div>
         </div>
       </div>
     </div>

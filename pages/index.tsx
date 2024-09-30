@@ -1,16 +1,26 @@
 import { memo } from "react";
 import wrapperStore from "@/store";
 import { fetchSearchSuggest } from "@/store/modules/home";
+import { getHomeInfoData } from "@/service/home";
+import TopSwiper from "@/components/top-swiper";
+import styles from "./index.module.scss";
 import type { FC, ReactElement } from "react";
 import type { GetServerSideProps } from "next";
+import type { IBanner, ICategory, IDigital, IRecommend } from "@/service/home";
 
 export interface IProps {
   children?: ReactElement;
+  banners: IBanner[];
+  categorys: ICategory[];
+  recommends: IRecommend[];
+  digitalData: IDigital;
 }
-const Home: FC<IProps> = memo(() => {
+
+const Home: FC<IProps> = memo((props) => {
+  const { banners } = props;
   return (
-    <div className="home">
-      <div>Home</div>
+    <div className={styles.home}>
+      <TopSwiper banners={banners}></TopSwiper>
     </div>
   );
 });
@@ -25,9 +35,16 @@ export const getServerSideProps: GetServerSideProps =
     return async () => {
       // 触发一个异步的action来发起网络请求，拿到搜索建议并存储到redux仓库中
       await store.dispatch(fetchSearchSuggest());
+      // 发起网络请求获取首页数据：轮播图、分类、推荐...
+      const res = await getHomeInfoData();
 
       return {
-        props: {},
+        props: {
+          banners: res.data.banners || [],
+          categorys: res.data.recommends || [],
+          recommends: res.data.recommends || [],
+          digitalData: res.data.digitalData || {},
+        },
       };
     };
   });
