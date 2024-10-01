@@ -8,7 +8,7 @@ import type { IHotProduct, IProductItem } from "@/service/home";
 
 interface IProps {
   children?: ReactElement;
-  products?: IHotProduct[];
+  products?: IHotProduct[] | IProductItem[];
 }
 
 const GridView: FC<IProps> = (props) => {

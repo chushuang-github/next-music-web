@@ -1,12 +1,17 @@
 import { memo } from "react";
 import wrapperStore from "@/store";
 import { fetchSearchSuggest } from "@/store/modules/home";
-import { getHomeInfoData, getHotProductV2Data } from "@/service/home";
+import {
+  getHomeInfoData,
+  getHotProductV2Data,
+  getAllProductData,
+} from "@/service/home";
 import TopSwiper from "@/components/top-swiper";
 import TabCategory from "@/components/tab-category";
 import Recommend from "@/components/recommend";
 import SectionTitle from "@/components/section-title";
 import GridView from "@/components/grid-view";
+import DigitalPanel from "@/components/digital-panel";
 import styles from "./index.module.scss";
 import classNames from "classnames";
 import type { FC, ReactElement } from "react";
@@ -17,6 +22,7 @@ import type {
   IDigital,
   IRecommend,
   IHotProduct,
+  IProductItem,
 } from "@/service/home";
 
 export interface IProps {
@@ -26,10 +32,19 @@ export interface IProps {
   recommends: IRecommend[];
   digitalData: IDigital;
   hotProducts: IHotProduct[];
+  allProducts: IProductItem[];
 }
 
 const Home: FC<IProps> = memo((props) => {
-  const { banners, categorys, recommends, hotProducts } = props;
+  const {
+    banners,
+    categorys,
+    recommends,
+    digitalData,
+    hotProducts,
+    allProducts,
+  } = props;
+
   return (
     <div className={styles.home}>
       <TopSwiper banners={banners}></TopSwiper>
@@ -39,7 +54,9 @@ const Home: FC<IProps> = memo((props) => {
       <div className={classNames("wrapper", styles.content)}>
         <SectionTitle title="编辑推荐"></SectionTitle>
         <GridView products={hotProducts}></GridView>
+        <DigitalPanel itemData={digitalData}></DigitalPanel>
         <SectionTitle title="热门商品"></SectionTitle>
+        <GridView products={allProducts}></GridView>
       </div>
     </div>
   );
@@ -57,8 +74,10 @@ export const getServerSideProps: GetServerSideProps =
       await store.dispatch(fetchSearchSuggest());
       // 2.发起网络请求获取首页数据：轮播图、分类、推荐...
       const res = await getHomeInfoData();
-      // 3.发起网络请求获取首页编辑推荐的商品
+      // 3.编辑推荐的商品
       const resHot = await getHotProductV2Data();
+      // 4.热门商品
+      const resAll = await getAllProductData();
 
       return {
         props: {
@@ -67,6 +86,7 @@ export const getServerSideProps: GetServerSideProps =
           recommends: res.data.recommends || [],
           digitalData: res.data.digitalData || {},
           hotProducts: resHot.data.hotProduct || [],
+          allProducts: resAll.data.allProduct || [],
         },
       };
     };

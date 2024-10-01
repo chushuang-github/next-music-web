@@ -3,18 +3,20 @@ import Image from "next/image";
 import Link from "next/link";
 import styles from "./index.module.scss";
 import type { FC, ReactElement } from "react";
-import type { IHotProduct, IProductItem } from "@/service/home";
+import type { IProductItem } from "@/service/home";
 
 interface IProps {
   children?: ReactElement;
-  product: IHotProduct;
+  product: any;
   showTip?: boolean;
   onItemClick?: (product: any) => void;
 }
 
 const GridViewItem: FC<IProps> = (props) => {
   const { product, showTip = false, onItemClick } = props;
-  const productItem: IProductItem = product.products;
+  const productItem: IProductItem = product.products
+    ? product.products
+    : product;
 
   const handleItemClick = () => {
     onItemClick && onItemClick(productItem);

@@ -73,6 +73,11 @@ export interface IProduct {
   hotProduct?: IHotProduct[];
 }
 
+export interface IAllProduct {
+  count: number;
+  allProduct?: IProductItem[];
+}
+
 // 获取搜索推荐
 export const getSearchSuggestData = () => {
   return hyRequest.get<ResultData<ISearchSuggest>>("/searchsuggest/get");
@@ -86,4 +91,11 @@ export const getHomeInfoData = () => {
 // 获取编辑推荐商品
 export const getHotProductV2Data = () => {
   return hyRequest.get<ResultData<IProduct>>("/hotproduct_v2/gets");
+};
+
+// 获取所有的热门商品
+export const getAllProductData = () => {
+  return hyRequest.get<ResultData<IAllProduct>>(
+    "/allProduct/gets?limit=60&offset=0"
+  );
 };
