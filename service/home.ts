@@ -51,6 +51,28 @@ export interface IHomeInfo {
   digitalData?: IDigital;
 }
 
+export interface IProductItem {
+  id: number;
+  name?: string;
+  type?: number;
+  minPrice?: number;
+  maxPrice?: number;
+  originalCost?: number;
+  couponLabelDesc?: string;
+  coverUrl?: string;
+}
+
+export interface IHotProduct {
+  id: number;
+  products: IProductItem;
+}
+
+export interface IProduct {
+  hasMore: boolean;
+  count: number;
+  hotProduct?: IHotProduct[];
+}
+
 // 获取搜索推荐
 export const getSearchSuggestData = () => {
   return hyRequest.get<ResultData<ISearchSuggest>>("/searchsuggest/get");
@@ -59,4 +81,9 @@ export const getSearchSuggestData = () => {
 // 获取首页其它信息(轮播图/分类...)
 export const getHomeInfoData = () => {
   return hyRequest.get<ResultData<IHomeInfo>>("/home/info");
+};
+
+// 获取编辑推荐商品
+export const getHotProductV2Data = () => {
+  return hyRequest.get<ResultData<IProduct>>("/hotproduct_v2/gets");
 };

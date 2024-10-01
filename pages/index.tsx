@@ -1,14 +1,23 @@
 import { memo } from "react";
 import wrapperStore from "@/store";
 import { fetchSearchSuggest } from "@/store/modules/home";
-import { getHomeInfoData } from "@/service/home";
+import { getHomeInfoData, getHotProductV2Data } from "@/service/home";
 import TopSwiper from "@/components/top-swiper";
 import TabCategory from "@/components/tab-category";
 import Recommend from "@/components/recommend";
+import SectionTitle from "@/components/section-title";
+import GridView from "@/components/grid-view";
 import styles from "./index.module.scss";
+import classNames from "classnames";
 import type { FC, ReactElement } from "react";
 import type { GetServerSideProps } from "next";
-import type { IBanner, ICategory, IDigital, IRecommend } from "@/service/home";
+import type {
+  IBanner,
+  ICategory,
+  IDigital,
+  IRecommend,
+  IHotProduct,
+} from "@/service/home";
 
 export interface IProps {
   children?: ReactElement;
@@ -16,15 +25,22 @@ export interface IProps {
   categorys: ICategory[];
   recommends: IRecommend[];
   digitalData: IDigital;
+  hotProducts: IHotProduct[];
 }
 
 const Home: FC<IProps> = memo((props) => {
-  const { banners, categorys, recommends } = props;
+  const { banners, categorys, recommends, hotProducts } = props;
   return (
     <div className={styles.home}>
       <TopSwiper banners={banners}></TopSwiper>
       <TabCategory categorys={categorys}></TabCategory>
       <Recommend recommends={recommends}></Recommend>
+      {/* 中间的内容 */}
+      <div className={classNames("wrapper", styles.content)}>
+        <SectionTitle title="编辑推荐"></SectionTitle>
+        <GridView products={hotProducts}></GridView>
+        <SectionTitle title="热门商品"></SectionTitle>
+      </div>
     </div>
   );
 });
@@ -37,10 +53,12 @@ export default Home;
 export const getServerSideProps: GetServerSideProps =
   wrapperStore.getServerSideProps((store) => {
     return async () => {
-      // 触发一个异步的action来发起网络请求，拿到搜索建议并存储到redux仓库中
+      // 1.触发一个异步的action来发起网络请求，拿到搜索建议并存储到redux仓库中
       await store.dispatch(fetchSearchSuggest());
-      // 发起网络请求获取首页数据：轮播图、分类、推荐...
+      // 2.发起网络请求获取首页数据：轮播图、分类、推荐...
       const res = await getHomeInfoData();
+      // 3.发起网络请求获取首页编辑推荐的商品
+      const resHot = await getHotProductV2Data();
 
       return {
         props: {
@@ -48,6 +66,7 @@ export const getServerSideProps: GetServerSideProps =
           categorys: res.data.categorys || [],
           recommends: res.data.recommends || [],
           digitalData: res.data.digitalData || {},
+          hotProducts: resHot.data.hotProduct || [],
         },
       };
     };
