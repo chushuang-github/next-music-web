@@ -1,6 +1,5 @@
 import { memo } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import styles from "./index.module.scss";
 import type { FC, ReactElement } from "react";
 import type { IProductItem } from "@/service/home";
@@ -9,21 +8,16 @@ interface IProps {
   children?: ReactElement;
   product: any;
   showTip?: boolean;
-  onItemClick?: (product: any) => void;
 }
 
 const GridViewItem: FC<IProps> = (props) => {
-  const { product, showTip = false, onItemClick } = props;
+  const { product, showTip = false } = props;
   const productItem: IProductItem = product.products
     ? product.products
     : product;
 
-  const handleItemClick = () => {
-    onItemClick && onItemClick(productItem);
-  };
-
   return (
-    <div className={styles["grid-view-item"]} onClick={handleItemClick}>
+    <div className={styles["grid-view-item"]}>
       <div className={styles["item-image"]}>
         <Image
           className={styles.image}
@@ -46,10 +40,7 @@ const GridViewItem: FC<IProps> = (props) => {
         {productItem.couponLabelDesc && (
           <span className={styles.label}>{productItem.couponLabelDesc}</span>
         )}
-        {/* Link */}
-        <Link href={`/detail?id=${productItem.id}`} className={styles.name}>
-          {productItem.name}
-        </Link>
+        <a className={styles.name}>{productItem.name}</a>
       </div>
       <div className={styles["item-price"]}>¥{productItem.minPrice}</div>
     </div>

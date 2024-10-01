@@ -1,5 +1,4 @@
 import { memo } from "react";
-import { useRouter } from "next/router";
 import styles from "./index.module.scss";
 import { Row, Col } from "antd";
 import GridViewItem from "../grid-view-item";
@@ -13,17 +12,6 @@ interface IProps {
 
 const GridView: FC<IProps> = (props) => {
   const { products } = props;
-  const router = useRouter();
-
-  const handleItemClick = (product: IProductItem) => {
-    router.push({
-      pathname: "/good-detail",
-      query: {
-        q: product.name,
-        id: product.id,
-      },
-    });
-  };
 
   return (
     <div className={styles["grid-view"]}>
@@ -33,7 +21,6 @@ const GridView: FC<IProps> = (props) => {
             <Col span={6} key={item.id}>
               <div className={styles["view-item"]}>
                 <GridViewItem
-                  onItemClick={handleItemClick}
                   showTip={index === 0}
                   product={item}
                 ></GridViewItem>
