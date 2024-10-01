@@ -1,4 +1,5 @@
 import { memo, useState } from "react";
+import { useRouter } from "next/router";
 import classNames from "classnames";
 import styles from "./index.module.scss";
 import type { FC, ReactElement } from "react";
@@ -9,8 +10,10 @@ export interface IProps {
   searchData: ISearchSuggest;
 }
 const Search: FC<IProps> = memo((props) => {
+  const router = useRouter();
   const { searchData } = props;
   const [inputFocus, setInputFocus] = useState<boolean>(false);
+  const [placeholder, setPlaceholder] = useState<string>("蓝牙耳机");
 
   const handleInputFocus = (isFocus: boolean) => {
     setInputFocus(isFocus);
@@ -19,8 +22,23 @@ const Search: FC<IProps> = memo((props) => {
   const handleKeyDown = (event: KeyboardEvent) => {
     if (event.key === "Enter") {
       const inputTarget = event.target as HTMLInputElement;
-      console.log(inputTarget.value);
+      setInputFocus(false);
+      jumpPage(inputTarget.placeholder);
     }
+  };
+
+  const handleItemClick = (name: string) => {
+    setPlaceholder(name);
+    jumpPage(name);
+  };
+
+  const jumpPage = (name: string) => {
+    router.push({
+      pathname: "/search",
+      query: {
+        q: name,
+      },
+    });
   };
 
   return (
@@ -30,7 +48,7 @@ const Search: FC<IProps> = memo((props) => {
         <input
           type="text"
           className={styles.input}
-          placeholder={searchData.defaultKey}
+          placeholder={placeholder}
           onFocus={() => handleInputFocus(true)}
           onBlur={() => handleInputFocus(false)}
           onKeyDown={(e) => handleKeyDown(e as any)}
@@ -49,7 +67,12 @@ const Search: FC<IProps> = memo((props) => {
         <ul>
           {searchData?.configKey &&
             searchData?.configKey.map((item, index) => (
-              <li key={item[index + 1]}>{item[index + 1]}</li>
+              <li
+                key={item[index + 1]}
+                onMouseDown={() => handleItemClick(item[index + 1])}
+              >
+                {item[index + 1]}
+              </li>
             ))}
         </ul>
       </div>
